@@ -12,6 +12,7 @@ interface OfferPreviewProps {
   imageUrl: string | null;
   brandKit?: BrandKit | null;
   customTemplateBg?: string | null;
+  readyTemplate?: string | null;  // Complete ready-made design (used as-is, no text overlays)
   onAnimate?: (imageUrl: string) => void;
 }
 
@@ -23,6 +24,7 @@ export const OfferPreview: React.FC<OfferPreviewProps> = ({
   imageUrl,
   brandKit,
   customTemplateBg,
+  readyTemplate,
   onAnimate
 }) => {
   const previewRef = useRef<HTMLDivElement>(null);
@@ -121,6 +123,7 @@ export const OfferPreview: React.FC<OfferPreviewProps> = ({
 
   // Logic to determine what to show
   const isCustomTemplate = template.id === 'custom-uploaded' && customTemplateBg;
+  const isReadyTemplate = !!readyTemplate;  // Ready-made template (displayed as-is, no text overlays)
 
   return (
     <div className="flex flex-col gap-4 items-center w-full h-full justify-center">
@@ -167,21 +170,29 @@ export const OfferPreview: React.FC<OfferPreviewProps> = ({
                     style={{ width: w, height: h }}
                 >
                     {/* 1. BACKGROUND LAYER */}
-                    {isCustomTemplate ? (
-                        <img 
-                            src={customTemplateBg} 
-                            alt="Custom Background" 
-                            className="absolute inset-0 w-full h-full object-cover" 
-                            crossOrigin="anonymous" 
+                    {isReadyTemplate ? (
+                        // Ready-made template: Display as-is, no modifications
+                        <img
+                            src={readyTemplate}
+                            alt="Ready Template"
+                            className="absolute inset-0 w-full h-full object-cover"
+                            crossOrigin="anonymous"
+                        />
+                    ) : isCustomTemplate ? (
+                        <img
+                            src={customTemplateBg}
+                            alt="Custom Background"
+                            className="absolute inset-0 w-full h-full object-cover"
+                            crossOrigin="anonymous"
                         />
                     ) : (
                         // Standard mode: Image IS the background (if exists)
                         imageUrl ? (
-                             <img 
-                                src={imageUrl} 
-                                alt="Product" 
-                                className="absolute inset-0 w-full h-full object-cover" 
-                                crossOrigin="anonymous" 
+                             <img
+                                src={imageUrl}
+                                alt="Product"
+                                className="absolute inset-0 w-full h-full object-cover"
+                                crossOrigin="anonymous"
                              />
                         ) : (
                              <div className="absolute inset-0 flex items-center justify-center bg-slate-700 text-slate-500">
@@ -190,8 +201,8 @@ export const OfferPreview: React.FC<OfferPreviewProps> = ({
                         )
                     )}
 
-                    {/* 1.5 PRODUCT OVERLAY (Only if using Custom Template) */}
-                    {isCustomTemplate && imageUrl && (
+                    {/* 1.5 PRODUCT OVERLAY (Only if using Custom Template, NOT for Ready Templates) */}
+                    {!isReadyTemplate && isCustomTemplate && imageUrl && (
                          <div className="absolute top-[10%] left-[10%] right-[10%] bottom-[20%] flex items-center justify-center pointer-events-none">
                              <img 
                                  src={imageUrl} 
@@ -202,22 +213,22 @@ export const OfferPreview: React.FC<OfferPreviewProps> = ({
                          </div>
                     )}
 
-                    {/* 2. Overlays */}
-                    {!isCustomTemplate && template.backgroundStyle?.overlayColor && (
-                        <div 
-                            className="absolute inset-0 pointer-events-none" 
-                            style={{ backgroundColor: template.backgroundStyle.overlayColor }} 
+                    {/* 2. Overlays (NOT for Ready Templates) */}
+                    {!isReadyTemplate && !isCustomTemplate && template.backgroundStyle?.overlayColor && (
+                        <div
+                            className="absolute inset-0 pointer-events-none"
+                            style={{ backgroundColor: template.backgroundStyle.overlayColor }}
                         />
                     )}
-                    {!isCustomTemplate && template.backgroundStyle?.gradient && (
-                        <div 
-                            className="absolute inset-0 pointer-events-none" 
-                            style={{ background: template.backgroundStyle.gradient }} 
+                    {!isReadyTemplate && !isCustomTemplate && template.backgroundStyle?.gradient && (
+                        <div
+                            className="absolute inset-0 pointer-events-none"
+                            style={{ background: template.backgroundStyle.gradient }}
                         />
                     )}
 
-                    {/* 3. Text Zones */}
-                    {template.textZones.map((zone, idx) => {
+                    {/* 3. Text Zones (NOT for Ready Templates - they are complete designs) */}
+                    {!isReadyTemplate && template.textZones.map((zone, idx) => {
                         let content = "";
                         if (zone.role === 'headline') content = resolvedText['headline'];
                         else if (zone.role === 'subheadline') content = resolvedText['subheadline'];
@@ -319,13 +330,13 @@ export const OfferPreview: React.FC<OfferPreviewProps> = ({
         </div>
 
         <div className="flex gap-2 w-full justify-center">
-            <Button onClick={handleDownload} disabled={isExporting || (!imageUrl && !isCustomTemplate)}>
+            <Button onClick={handleDownload} disabled={isExporting || (!imageUrl && !isCustomTemplate && !isReadyTemplate)}>
                 <Download size={18} /> {isExporting ? 'Processing...' : 'Export PNG'}
             </Button>
             {onAnimate && (
-                <Button 
-                    onClick={handleAnimateClick} 
-                    disabled={isExporting || (!imageUrl && !isCustomTemplate)}
+                <Button
+                    onClick={handleAnimateClick}
+                    disabled={isExporting || (!imageUrl && !isCustomTemplate && !isReadyTemplate)}
                     className="bg-pink-600 hover:bg-pink-500 text-white shadow-pink-500/20 border-none"
                 >
                     <Clapperboard size={18} /> Animate
