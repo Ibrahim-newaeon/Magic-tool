@@ -7,37 +7,280 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
-    <title>New Aeon Apps v2.2</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="New Aeon Magic Apps - AI-powered creative suite for social media content. Edit images, create animations, design offers with Gemini AI." />
+    <meta name="keywords" content="AI, image editing, social media, content creation, Gemini AI, animations, offer design" />
+    <meta name="author" content="New Aeon" />
+
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:title" content="New Aeon Magic Apps v2.2" />
+    <meta property="og:description" content="AI-powered creative suite for social media content creation" />
+    <meta property="og:image" content="/NewAeon.png" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Theme Color for Mobile Browsers -->
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <title>New Aeon Magic Apps v2.2</title>
     <link rel="icon" type="image/png" href="NewAeon.png" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;600&family=Permanent+Marker&family=Playfair+Display:wght@400;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700;800&family=Permanent+Marker&family=Playfair+Display:wght@400;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+
     <style>
+      /* Root Variables */
+      :root {
+        --primary-bg: #0f172a;
+        --secondary-bg: #1e293b;
+        --accent-purple: #8b5cf6;
+        --accent-blue: #3b82f6;
+        --accent-pink: #ec4899;
+        --accent-cyan: #06b6d4;
+        --text-primary: #f1f5f9;
+        --text-secondary: #94a3b8;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
       body {
         font-family: 'Inter', sans-serif;
-        background-color: #0f172a;
-        color: #e2e8f0;
+        background: var(--primary-bg);
+        color: var(--text-primary);
+        min-height: 100vh;
+        overflow-x: hidden;
       }
-      /* Custom scrollbar for webkit */
+
+      /* Animated Gradient Background */
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background:
+          radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+          radial-gradient(ellipse at 80% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+          radial-gradient(ellipse at 50% 50%, rgba(236, 72, 153, 0.08) 0%, transparent 60%);
+        pointer-events: none;
+        z-index: -1;
+        animation: gradientShift 15s ease-in-out infinite alternate;
+      }
+
+      @keyframes gradientShift {
+        0% {
+          opacity: 0.8;
+          transform: scale(1) rotate(0deg);
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0.8;
+          transform: scale(1.1) rotate(3deg);
+        }
+      }
+
+      /* Loading Screen */
+      #loading-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease, visibility 0.5s ease;
+      }
+
+      #loading-screen.hidden {
+        opacity: 0;
+        visibility: hidden;
+      }
+
+      .loader-logo {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 30px;
+        animation: pulse 2s ease-in-out infinite;
+        filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.5));
+      }
+
+      @keyframes pulse {
+        0%, 100% {
+          transform: scale(1);
+          filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.5));
+        }
+        50% {
+          transform: scale(1.05);
+          filter: drop-shadow(0 0 50px rgba(139, 92, 246, 0.8));
+        }
+      }
+
+      .loader-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #3b82f6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+        letter-spacing: -0.02em;
+      }
+
+      .loader-subtitle {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin-bottom: 40px;
+      }
+
+      /* Spinner */
+      .spinner {
+        width: 50px;
+        height: 50px;
+        position: relative;
+      }
+
+      .spinner::before,
+      .spinner::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+      }
+
+      .spinner::before {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 50%, #ec4899 100%);
+        animation: spin 1.5s linear infinite;
+      }
+
+      .spinner::after {
+        width: 80%;
+        height: 80%;
+        background: #0f172a;
+        top: 10%;
+        left: 10%;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .loading-text {
+        margin-top: 20px;
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        animation: fadeInOut 2s ease-in-out infinite;
+      }
+
+      @keyframes fadeInOut {
+        0%, 100% { opacity: 0.5; }
+        50% { opacity: 1; }
+      }
+
+      /* Custom Scrollbar */
       ::-webkit-scrollbar {
-        width: 8px;
+        width: 10px;
+        height: 10px;
       }
+
       ::-webkit-scrollbar-track {
-        background: #1e293b; 
+        background: var(--secondary-bg);
+        border-radius: 5px;
       }
+
       ::-webkit-scrollbar-thumb {
-        background: #475569; 
-        border-radius: 4px;
+        background: linear-gradient(180deg, #8b5cf6 0%, #3b82f6 100%);
+        border-radius: 5px;
+        border: 2px solid var(--secondary-bg);
       }
+
       ::-webkit-scrollbar-thumb:hover {
-        background: #64748b; 
+        background: linear-gradient(180deg, #a78bfa 0%, #60a5fa 100%);
       }
+
+      /* Firefox Scrollbar */
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: #8b5cf6 var(--secondary-bg);
+      }
+
+      /* Selection */
+      ::selection {
+        background: rgba(139, 92, 246, 0.4);
+        color: #fff;
+      }
+
+      /* Utility Classes */
       .cursor-wait {
         cursor: wait;
       }
+
+      /* Smooth Transitions for App */
+      #root {
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+
+      #root.loaded {
+        opacity: 1;
+      }
+
+      /* Focus Styles */
+      *:focus-visible {
+        outline: 2px solid var(--accent-purple);
+        outline-offset: 2px;
+      }
+
+      /* Glassmorphism Utility */
+      .glass {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      /* Glow Effects */
+      .glow-purple {
+        box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+      }
+
+      .glow-blue {
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+      }
+
+      /* Animation Utilities */
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
     </style>
-  <script type="importmap">
+
+    <script type="importmap">
 {
   "imports": {
     "react": "https://aistudiocdn.com/react@^19.2.0",
@@ -48,11 +291,40 @@
     "html-to-image": "https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/+esm"
   }
 }
-</script>
-<link rel="stylesheet" href="/index.css">
-</head>
+    </script>
+    <link rel="stylesheet" href="/index.css">
+  </head>
   <body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+      <img src="/NewAeon.png" alt="New Aeon Logo" class="loader-logo" />
+      <h1 class="loader-title">New Aeon Magic</h1>
+      <p class="loader-subtitle">AI-Powered Creative Suite</p>
+      <div class="spinner"></div>
+      <p class="loading-text">Initializing magic...</p>
+    </div>
+
+    <!-- Main App Root -->
     <div id="root"></div>
-  <script type="module" src="/index.tsx"></script>
-</body>
+
+    <script type="module" src="/index.tsx"></script>
+
+    <script>
+      // Hide loading screen when app is ready
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          const loadingScreen = document.getElementById('loading-screen');
+          const root = document.getElementById('root');
+
+          if (loadingScreen) {
+            loadingScreen.classList.add('hidden');
+          }
+
+          if (root) {
+            root.classList.add('loaded');
+          }
+        }, 1500); // Minimum loading time for smooth UX
+      });
+    </script>
+  </body>
 </html>
