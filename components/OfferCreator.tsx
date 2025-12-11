@@ -54,6 +54,10 @@ export const OfferCreator: React.FC<OfferCreatorProps> = ({
   const [customTemplateBg, setCustomTemplateBg] = useState<string | null>(null);
   const templateInputRef = useRef<HTMLInputElement>(null);
 
+  // Ready-Made Template State (complete designs used as-is)
+  const [readyTemplate, setReadyTemplate] = useState<string | null>(null);
+  const readyTemplateInputRef = useRef<HTMLInputElement>(null);
+
   // Variants State
   const [variants, setVariants] = useState<{ tone: string, copy: GeneratedOfferCopy }[]>([]);
   const [isGeneratingVariants, setIsGeneratingVariants] = useState(false);
@@ -99,6 +103,27 @@ export const OfferCreator: React.FC<OfferCreatorProps> = ({
       if (selectedTemplateId === 'custom-uploaded') {
           setSelectedTemplateId(OFFER_TEMPLATES[0].id);
       }
+  };
+
+  // Ready-Made Template Handlers (complete designs used as-is, no text overlays)
+  const handleReadyTemplateUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            if (ev.target?.result) {
+                setReadyTemplate(ev.target.result as string);
+                // Clear custom background if any
+                setCustomTemplateBg(null);
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+  };
+
+  const handleClearReadyTemplate = () => {
+      setReadyTemplate(null);
+      if (readyTemplateInputRef.current) readyTemplateInputRef.current.value = '';
   };
 
   const handleGenerateCopy = async () => {
@@ -262,12 +287,53 @@ export const OfferCreator: React.FC<OfferCreatorProps> = ({
                          </div>
                      )}
 
-                     <input 
-                        type="file" 
-                        ref={templateInputRef} 
-                        className="hidden" 
-                        accept="image/png,image/jpeg,image/webp" 
+                     <input
+                        type="file"
+                        ref={templateInputRef}
+                        className="hidden"
+                        accept="image/png,image/jpeg,image/webp"
                         onChange={handleCustomTemplateUpload}
+                     />
+                 </div>
+
+                 {/* Ready-Made Template Upload */}
+                 <div className="mt-4 pt-4 border-t border-slate-700">
+                     <label className="text-xs text-slate-400 block mb-2">Or Upload Ready-Made Design</label>
+                     <button
+                        onClick={() => readyTemplateInputRef.current?.click()}
+                        className={`w-full py-3 border-2 border-dashed rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+                            readyTemplate
+                            ? 'bg-purple-900/30 border-purple-500 text-purple-300'
+                            : 'bg-gradient-to-r from-slate-800/50 to-slate-900/50 border-slate-600 text-slate-300 hover:border-purple-500 hover:text-purple-300'
+                        }`}
+                     >
+                        <Layout size={16} />
+                        {readyTemplate ? 'Change Ready Template' : 'Upload Complete Design'}
+                     </button>
+                     <p className="text-[10px] text-slate-500 mt-1.5 text-center">
+                        Upload a fully designed template (no text will be added)
+                     </p>
+
+                     {readyTemplate && (
+                         <div className="flex items-center justify-between mt-2 px-1">
+                             <div className="flex items-center gap-1.5 text-xs text-purple-400">
+                                 <Check size={12} /> Ready Template Active
+                             </div>
+                             <button
+                                onClick={handleClearReadyTemplate}
+                                className="flex items-center gap-1 text-xs text-red-400 hover:text-red-300"
+                             >
+                                 <Trash2 size={12} /> Remove
+                             </button>
+                         </div>
+                     )}
+
+                     <input
+                        type="file"
+                        ref={readyTemplateInputRef}
+                        className="hidden"
+                        accept="image/png,image/jpeg,image/webp"
+                        onChange={handleReadyTemplateUpload}
                      />
                  </div>
              </div>
@@ -428,7 +494,7 @@ export const OfferCreator: React.FC<OfferCreatorProps> = ({
 
       {/* RIGHT: Preview */}
       <div className="flex-1 bg-black/40 rounded-2xl p-6 flex flex-col border border-white/5 min-h-[500px]">
-         <OfferPreview 
+         <OfferPreview
             template={selectedTemplate}
             size={selectedSize}
             product={product}
@@ -436,6 +502,7 @@ export const OfferCreator: React.FC<OfferCreatorProps> = ({
             imageUrl={sourceImageUrl}
             brandKit={brandKit}
             customTemplateBg={customTemplateBg}
+            readyTemplate={readyTemplate}
             onAnimate={onAnimate}
          />
       </div>
