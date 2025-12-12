@@ -136,6 +136,7 @@ function App() {
   const [prompt, setPrompt] = useState('');
   const [status, setStatus] = useState<ProcessingState>({ isGenerating: false, error: null });
   const [activeTab, setActiveTab] = useState<'edit' | 'story' | 'offer'>('edit');
+  const [animationFormat, setAnimationFormat] = useState<'story' | 'square'>('story');
   const [showFeatureModal, setShowFeatureModal] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
 
@@ -409,12 +410,12 @@ function App() {
             >
               Studio Editor
             </button>
-            <button 
+            <button
               onClick={() => setActiveTab('story')}
               disabled={!generatedImage}
               className={`px-3 lg:px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${activeTab === 'story' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed'}`}
             >
-              <Smartphone size={14} /> Story Mode
+              <PlayCircle size={14} /> Animation Mode
             </button>
             <button 
               onClick={() => setActiveTab('offer')}
@@ -740,16 +741,32 @@ function App() {
                             Result Preview
                             </span>
                         </div>
+                        {/* Animation Format Selector */}
+                        <div className="flex gap-1 bg-black/40 backdrop-blur-md p-1 rounded-lg border border-white/10 pointer-events-auto">
+                            <button
+                              onClick={() => setAnimationFormat('story')}
+                              className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${animationFormat === 'story' ? 'bg-indigo-600 text-white' : 'text-white/70 hover:text-white'}`}
+                            >
+                              Story 9:16
+                            </button>
+                            <button
+                              onClick={() => setAnimationFormat('square')}
+                              className={`px-3 py-1 text-xs font-medium rounded-md transition-all ${animationFormat === 'square' ? 'bg-indigo-600 text-white' : 'text-white/70 hover:text-white'}`}
+                            >
+                              Square 1:1
+                            </button>
+                        </div>
                         </div>
                     )}
 
                     {generatedImage ? (
-                        <StoryViewer 
+                        <StoryViewer
                         imageUrl={generatedImage}
-                        overlayText={activeOverlayText} 
+                        overlayText={activeOverlayText}
                         audioUrl={audioUrl}
                         isActive={true}
-                        onClose={() => setActiveTab('edit')} 
+                        onClose={() => setActiveTab('edit')}
+                        aspectRatio={animationFormat}
                         />
                     ) : (
                         <div className="w-full h-full flex flex-col items-center justify-center text-slate-600 p-8">
