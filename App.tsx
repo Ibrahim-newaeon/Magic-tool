@@ -363,16 +363,22 @@ function App() {
       {showFeatureModal && <FeatureModal onClose={() => setShowFeatureModal(false)} />}
       
       {showWizard && (
-          <Wizard 
+          <Wizard
              initialBrandKit={brandKit}
              onClose={() => setShowWizard(false)}
              onComplete={(data) => {
                  setProductInfo(data.product);
                  setSelectedTemplateId(data.templateId);
                  setSelectedSize(data.size);
-                 setOfferCopy(data.offerCopy);
+                 if (data.offerCopy) {
+                   setOfferCopy(data.offerCopy);
+                 }
                  handleBrandKitUpdate(data.brandKit);
                  setActiveTab(data.activeTab);
+                 // Handle ready template from wizard
+                 if (data.readyTemplate) {
+                   setGeneratedImage(data.readyTemplate);
+                 }
                  setShowWizard(false);
              }}
           />
