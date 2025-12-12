@@ -9,12 +9,17 @@ interface StoryViewerProps {
   audioUrl?: string | null;
   onClose?: () => void;
   isActive: boolean;
+  aspectRatio?: 'story' | 'square';  // 'story' = 9:16, 'square' = 1:1
 }
 
-export const StoryViewer: React.FC<StoryViewerProps> = ({ imageUrl, overlayText, audioUrl, onClose, isActive }) => {
+export const StoryViewer: React.FC<StoryViewerProps> = ({ imageUrl, overlayText, audioUrl, onClose, isActive, aspectRatio = 'story' }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
+  // Canvas dimensions based on aspect ratio
+  const CANVAS_WIDTH = 1080;
+  const CANVAS_HEIGHT = aspectRatio === 'square' ? 1080 : 1920;
+
   // State
   const [activePresetId, setActivePresetId] = useState<string>('cinematic');
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -142,16 +147,16 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({ imageUrl, overlayText,
 
     // Clear canvas
     ctx.fillStyle = '#000';
-    ctx.fillRect(0, 0, 1080, 1920);
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
     const img = imageRef.current;
     
     // Calculate "Cover" dimensions
-    const scaleFactor = Math.max(1080 / img.width, 1920 / img.height);
+    const scaleFactor = Math.max(CANVAS_WIDTH / img.width, CANVAS_HEIGHT / img.height);
     const w = img.width * scaleFactor;
     const h = img.height * scaleFactor;
-    const x = (1080 - w) / 2;
-    const y = (1920 - h) / 2;
+    const x = (CANVAS_WIDTH - w) / 2;
+    const y = (CANVAS_HEIGHT - h) / 2;
 
     ctx.save();
     
@@ -250,7 +255,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({ imageUrl, overlayText,
     gradient.addColorStop(0, 'rgba(0,0,0,0)');
     gradient.addColorStop(1, 'rgba(0,0,0,0.4)');
     ctx.fillStyle = gradient;
-    ctx.fillRect(0,0,1080,1920);
+    ctx.fillRect(0,0,CANVAS_WIDTH,CANVAS_HEIGHT);
 
     ctx.restore();
 
@@ -294,12 +299,12 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({ imageUrl, overlayText,
             
             // X alignment
             if (pos.includes('left')) { startX = margin; ctx.textAlign = 'left'; }
-            else if (pos.includes('right')) { startX = 1080 - margin; ctx.textAlign = 'right'; }
+            else if (pos.includes('right')) { startX = CANVAS_WIDTH - margin; ctx.textAlign = 'right'; }
             else { startX = 540; ctx.textAlign = 'center'; }
             
             // Y alignment
             if (pos.includes('top')) startY = margin * 2;
-            else if (pos.includes('bottom')) startY = 1920 - (margin * 2);
+            else if (pos.includes('bottom')) startY = CANVAS_HEIGHT - (margin * 2);
             else startY = 960;
 
         } else {
@@ -537,8 +542,8 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({ imageUrl, overlayText,
         
         {/* VIDEO CONTAINER */}
         <div className="relative flex-1 w-full min-h-0 flex items-center justify-center" onClick={togglePlay}>
-          <div className="relative aspect-[9/16] h-full max-h-full rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10 bg-gray-900 group cursor-pointer">
-             <canvas ref={canvasRef} width={1080} height={1920} className="w-full h-full object-contain bg-black" />
+          <div className={`relative ${aspectRatio === 'square' ? 'aspect-square' : 'aspect-[9/16]'} h-full max-h-full rounded-xl overflow-hidden shadow-2xl ring-1 ring-white/10 bg-gray-900 group cursor-pointer`}>
+             <canvas ref={canvasRef} width={CANVAS_WIDTH} height={CANVAS_HEIGHT} className="w-full h-full object-contain bg-black" />
              {!isPlaying && !isExporting && (
                <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/10">
                   <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center shadow-lg border border-white/20 animate-in fade-in zoom-in duration-200">
