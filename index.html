@@ -1,330 +1,300 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="version" content="2.2.0" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Aeon Magic | AI Creative Studio</title>
 
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="New Aeon Magic Apps - AI-powered creative suite for social media content. Edit images, create animations, design offers with Gemini AI." />
-    <meta name="keywords" content="AI, image editing, social media, content creation, Gemini AI, animations, offer design" />
-    <meta name="author" content="New Aeon" />
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/NewAeon.png">
 
-    <!-- Open Graph / Social Sharing -->
-    <meta property="og:title" content="New Aeon Magic Apps v2.2" />
-    <meta property="og:description" content="AI-powered creative suite for social media content creation" />
-    <meta property="og:image" content="/NewAeon.png" />
-    <meta property="og:type" content="website" />
-    <meta name="twitter:card" content="summary_large_image" />
+  <!-- SEO -->
+  <meta name="description" content="AI-powered creative studio for social media. Design offers, animate stories, edit images with Gemini AI.">
+  <meta name="theme-color" content="#030712">
 
-    <!-- Theme Color for Mobile Browsers -->
-    <meta name="theme-color" content="#0f172a" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <!-- Open Graph -->
+  <meta property="og:title" content="New Aeon Magic">
+  <meta property="og:description" content="AI Creative Studio for Social Media">
+  <meta property="og:image" content="/NewAeon.png">
 
-    <title>New Aeon Magic Apps v2.2</title>
-    <link rel="icon" type="image/png" href="NewAeon.png" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700;800&family=Permanent+Marker&family=Playfair+Display:wght@400;600&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600&family=Montserrat:wght@400;600;700&family=Roboto+Mono:wght@400;500&family=Permanent+Marker&display=swap" rel="stylesheet">
 
-    <style>
-      /* Root Variables */
-      :root {
-        --primary-bg: #0f172a;
-        --secondary-bg: #1e293b;
-        --accent-purple: #8b5cf6;
-        --accent-blue: #3b82f6;
-        --accent-pink: #ec4899;
-        --accent-cyan: #06b6d4;
-        --text-primary: #f1f5f9;
-        --text-secondary: #94a3b8;
-      }
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+  <style>
+    :root {
+      --bg-dark: #030712;
+      --bg-card: #0a0f1a;
+      --accent-gold: #f59e0b;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --text-light: #f8fafc;
+      --text-muted: #64748b;
+    }
 
-      html {
-        scroll-behavior: smooth;
-      }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-      body {
-        font-family: 'Inter', sans-serif;
-        background: var(--primary-bg);
-        color: var(--text-primary);
-        min-height: 100vh;
-        overflow-x: hidden;
-      }
+    body {
+      font-family: 'Space Grotesk', 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-      /* Animated Gradient Background */
-      body::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background:
-          radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-          radial-gradient(ellipse at 80% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
-          radial-gradient(ellipse at 50% 50%, rgba(236, 72, 153, 0.08) 0%, transparent 60%);
-        pointer-events: none;
-        z-index: -1;
-        animation: gradientShift 15s ease-in-out infinite alternate;
-      }
+    /* Mesh Gradient Background */
+    .mesh-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(at 0% 0%, rgba(245, 158, 11, 0.12) 0%, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(244, 63, 94, 0.1) 0%, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+    }
 
-      @keyframes gradientShift {
-        0% {
-          opacity: 0.8;
-          transform: scale(1) rotate(0deg);
-        }
-        50% {
-          opacity: 1;
-        }
-        100% {
-          opacity: 0.8;
-          transform: scale(1.1) rotate(3deg);
-        }
-      }
+    /* Grid Pattern Overlay */
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
+    }
 
-      /* Loading Screen */
-      #loading-screen {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-        transition: opacity 0.5s ease, visibility 0.5s ease;
-      }
+    /* Splash Screen */
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #030712 0%, #0a0f1a 100%);
+      transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.6s;
+    }
 
-      #loading-screen.hidden {
-        opacity: 0;
-        visibility: hidden;
-      }
+    #splash.fade-out {
+      opacity: 0;
+      visibility: hidden;
+    }
 
-      .loader-logo {
-        width: 120px;
-        height: 120px;
-        margin-bottom: 30px;
-        animation: pulse 2s ease-in-out infinite;
-        filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.5));
-      }
+    .splash-logo {
+      width: 100px;
+      height: 100px;
+      border-radius: 24px;
+      box-shadow:
+        0 0 0 1px rgba(245, 158, 11, 0.2),
+        0 20px 50px -15px rgba(245, 158, 11, 0.3);
+      animation: logoFloat 3s ease-in-out infinite;
+    }
 
-      @keyframes pulse {
-        0%, 100% {
-          transform: scale(1);
-          filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.5));
-        }
-        50% {
-          transform: scale(1.05);
-          filter: drop-shadow(0 0 50px rgba(139, 92, 246, 0.8));
-        }
-      }
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-8px) scale(1.02); }
+    }
 
-      .loader-title {
-        font-family: 'Montserrat', sans-serif;
-        font-size: 2rem;
-        font-weight: 700;
-        background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 50%, #3b82f6 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 10px;
-        letter-spacing: -0.02em;
-      }
+    .splash-brand {
+      margin-top: 32px;
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #f59e0b 0%, #f43f5e 50%, #10b981 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
 
-      .loader-subtitle {
-        color: var(--text-secondary);
-        font-size: 0.9rem;
-        margin-bottom: 40px;
-      }
+    .splash-tagline {
+      margin-top: 8px;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
 
-      /* Spinner */
-      .spinner {
-        width: 50px;
-        height: 50px;
-        position: relative;
-      }
+    /* Progress Bar */
+    .progress-container {
+      margin-top: 48px;
+      width: 200px;
+      height: 3px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
 
-      .spinner::before,
-      .spinner::after {
-        content: '';
-        position: absolute;
-        border-radius: 50%;
-      }
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #f59e0b, #f43f5e, #10b981);
+      border-radius: 10px;
+      animation: progressLoad 1.8s ease-out forwards;
+    }
 
-      .spinner::before {
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 50%, #ec4899 100%);
-        animation: spin 1.5s linear infinite;
-      }
+    @keyframes progressLoad {
+      0% { width: 0%; }
+      20% { width: 20%; }
+      50% { width: 60%; }
+      80% { width: 85%; }
+      100% { width: 100%; }
+    }
 
-      .spinner::after {
-        width: 80%;
-        height: 80%;
-        background: #0f172a;
-        top: 10%;
-        left: 10%;
-      }
+    .splash-status {
+      margin-top: 16px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      animation: statusPulse 1.5s ease-in-out infinite;
+    }
 
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
+    @keyframes statusPulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
 
-      .loading-text {
-        margin-top: 20px;
-        color: var(--text-secondary);
-        font-size: 0.85rem;
-        animation: fadeInOut 2s ease-in-out infinite;
-      }
+    /* App Root */
+    #root {
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
 
-      @keyframes fadeInOut {
-        0%, 100% { opacity: 0.5; }
-        50% { opacity: 1; }
-      }
+    #root.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
-      /* Custom Scrollbar */
-      ::-webkit-scrollbar {
-        width: 10px;
-        height: 10px;
-      }
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
 
-      ::-webkit-scrollbar-track {
-        background: var(--secondary-bg);
-        border-radius: 5px;
-      }
+    ::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.03);
+    }
 
-      ::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, #8b5cf6 0%, #3b82f6 100%);
-        border-radius: 5px;
-        border: 2px solid var(--secondary-bg);
-      }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #f59e0b 0%, #f43f5e 100%);
+      border-radius: 4px;
+    }
 
-      ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(180deg, #a78bfa 0%, #60a5fa 100%);
-      }
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #fbbf24 0%, #fb7185 100%);
+    }
 
-      /* Firefox Scrollbar */
-      * {
-        scrollbar-width: thin;
-        scrollbar-color: #8b5cf6 var(--secondary-bg);
-      }
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: #f59e0b rgba(255,255,255,0.03);
+    }
 
-      /* Selection */
-      ::selection {
-        background: rgba(139, 92, 246, 0.4);
-        color: #fff;
-      }
+    /* Selection */
+    ::selection {
+      background: rgba(245, 158, 11, 0.3);
+      color: #fff;
+    }
 
-      /* Utility Classes */
-      .cursor-wait {
-        cursor: wait;
-      }
+    /* Focus */
+    *:focus-visible {
+      outline: 2px solid #f59e0b;
+      outline-offset: 2px;
+    }
 
-      /* Smooth Transitions for App */
-      #root {
-        opacity: 0;
-        transition: opacity 0.5s ease;
-      }
+    /* Cursor */
+    .cursor-wait { cursor: wait; }
 
-      #root.loaded {
-        opacity: 1;
-      }
+    /* Utility animations */
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
 
-      /* Focus Styles */
-      *:focus-visible {
-        outline: 2px solid var(--accent-purple);
-        outline-offset: 2px;
-      }
+    .shimmer {
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+      background-size: 200% 100%;
+      animation: shimmer 2s infinite;
+    }
+  </style>
 
-      /* Glassmorphism Utility */
-      .glass {
-        background: rgba(30, 41, 59, 0.7);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
-
-      /* Glow Effects */
-      .glow-purple {
-        box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
-      }
-
-      .glow-blue {
-        box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-      }
-
-      /* Animation Utilities */
-      .animate-float {
-        animation: float 6s ease-in-out infinite;
-      }
-
-      @keyframes float {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-      }
-    </style>
-
-    <script type="importmap">
-{
-  "imports": {
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
-    "html-to-image": "https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/+esm"
+  <!-- Import Map -->
+  <script type="importmap">
+  {
+    "imports": {
+      "react": "https://aistudiocdn.com/react@^19.2.0",
+      "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+      "react/": "https://aistudiocdn.com/react@^19.2.0/",
+      "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+      "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
+      "html-to-image": "https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/+esm"
+    }
   }
-}
-    </script>
-    <link rel="stylesheet" href="/index.css">
-  </head>
-  <body>
-    <!-- Loading Screen -->
-    <div id="loading-screen">
-      <img src="/NewAeon.png" alt="New Aeon Logo" class="loader-logo" />
-      <h1 class="loader-title">New Aeon Magic</h1>
-      <p class="loader-subtitle">AI-Powered Creative Suite</p>
-      <div class="spinner"></div>
-      <p class="loading-text">Initializing magic...</p>
+  </script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+<body>
+  <!-- Background Effects -->
+  <div class="mesh-bg"></div>
+  <div class="grid-overlay"></div>
+
+  <!-- Splash Screen -->
+  <div id="splash">
+    <img src="/NewAeon.png" alt="New Aeon" class="splash-logo">
+    <h1 class="splash-brand">New Aeon Magic</h1>
+    <p class="splash-tagline">AI Creative Studio</p>
+    <div class="progress-container">
+      <div class="progress-bar"></div>
     </div>
+    <p class="splash-status">Loading resources...</p>
+  </div>
 
-    <!-- Main App Root -->
-    <div id="root"></div>
+  <!-- App -->
+  <div id="root"></div>
 
-    <script type="module" src="/index.tsx"></script>
+  <script type="module" src="/index.tsx"></script>
 
-    <script>
-      // Hide loading screen when app is ready
+  <script>
+    (function() {
+      const splash = document.getElementById('splash');
+      const root = document.getElementById('root');
+      const status = document.querySelector('.splash-status');
+
+      const messages = [
+        'Loading resources...',
+        'Initializing AI...',
+        'Preparing canvas...',
+        'Almost ready...'
+      ];
+
+      let msgIndex = 0;
+      const msgInterval = setInterval(() => {
+        msgIndex = (msgIndex + 1) % messages.length;
+        if (status) status.textContent = messages[msgIndex];
+      }, 500);
+
       window.addEventListener('load', () => {
         setTimeout(() => {
-          const loadingScreen = document.getElementById('loading-screen');
-          const root = document.getElementById('root');
+          clearInterval(msgInterval);
+          if (status) status.textContent = 'Ready!';
 
-          if (loadingScreen) {
-            loadingScreen.classList.add('hidden');
-          }
-
-          if (root) {
-            root.classList.add('loaded');
-          }
-        }, 1500); // Minimum loading time for smooth UX
+          setTimeout(() => {
+            if (splash) splash.classList.add('fade-out');
+            if (root) root.classList.add('visible');
+          }, 300);
+        }, 2000);
       });
-    </script>
-  </body>
+    })();
+  </script>
+</body>
 </html>
