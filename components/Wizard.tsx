@@ -21,8 +21,14 @@ interface WizardProps {
   initialBrandKit: BrandKit;
 }
 
-// Sample template gallery (preview images) - these are STYLE presets, not actual backgrounds
+// Template gallery - templates with 'image' property are ready-to-use with backgrounds
+// Templates without 'image' are style presets that need user to upload background
 const TEMPLATE_GALLERY = [
+  // Ready-to-use templates (Canva exports) - add your templates here!
+  // { id: 'canva-sale-1', name: 'EOY Sale', image: '/templates/eoy-sale.png', category: 'Sale', description: 'End of year sale template' },
+  // { id: 'canva-promo-1', name: 'Flash Promo', image: '/templates/flash-promo.png', category: 'Promo', description: 'Flash promotion template' },
+
+  // Style presets (gradient placeholders - user uploads their own background)
   { id: 'modern-minimal', name: 'Modern Minimal', preview: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', category: 'Elegant', description: 'Clean centered text with elegant typography' },
   { id: 'bold-sale', name: 'Bold Sale', preview: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', category: 'Sale', description: 'High impact with bold price badge' },
   { id: 'fashion-editorial', name: 'Fashion', preview: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', category: 'Fashion', description: 'Minimal text for showcasing imagery' },
@@ -31,10 +37,18 @@ const TEMPLATE_GALLERY = [
   { id: 'custom-uploaded', name: 'Neon Glow', preview: 'linear-gradient(135deg, #a855f7 0%, #3b82f6 100%)', category: 'Modern', description: 'Modern neon-style text effects' },
 ];
 
-// Steps for Gallery flow (needs background upload)
-const GALLERY_STEPS = [
+// Steps for Gallery flow with background upload (style presets)
+const GALLERY_STEPS_WITH_BG = [
   { id: 'template', title: 'Choose Style', icon: Image },
   { id: 'background', title: 'Add Background', icon: ImagePlus },
+  { id: 'text', title: 'Text Options', icon: Type },
+  { id: 'format', title: 'Select Format', icon: Smartphone },
+  { id: 'finish', title: 'Finish', icon: Sparkles },
+];
+
+// Steps for Gallery flow without background upload (ready templates with images)
+const GALLERY_STEPS_NO_BG = [
+  { id: 'template', title: 'Choose Template', icon: Image },
   { id: 'text', title: 'Text Options', icon: Type },
   { id: 'format', title: 'Select Format', icon: Smartphone },
   { id: 'finish', title: 'Finish', icon: Sparkles },
@@ -59,10 +73,16 @@ export const Wizard: React.FC<WizardProps> = ({ onComplete, onClose, initialBran
   const uploadInputRef = useRef<HTMLInputElement>(null);
   const backgroundInputRef = useRef<HTMLInputElement>(null);
 
-  // Dynamic steps based on template source
+  // Check if selected gallery template has an image (ready-to-use) or needs background upload
+  const selectedTemplateData = TEMPLATE_GALLERY.find(t => t.id === selectedGalleryTemplate);
+  const templateHasImage = !!(selectedTemplateData as any)?.image;
+
+  // Dynamic steps based on template source and whether template has image
   const STEPS = useMemo(() => {
-    return templateSource === 'gallery' ? GALLERY_STEPS : UPLOAD_STEPS;
-  }, [templateSource]);
+    if (templateSource === 'upload') return UPLOAD_STEPS;
+    // Gallery templates with images skip background upload step
+    return templateHasImage ? GALLERY_STEPS_NO_BG : GALLERY_STEPS_WITH_BG;
+  }, [templateSource, templateHasImage]);
 
   // Text Options
   const [addTextOverlay, setAddTextOverlay] = useState(true);
@@ -153,7 +173,10 @@ export const Wizard: React.FC<WizardProps> = ({ onComplete, onClose, initialBran
         brandKit: initialBrandKit,
         activeTab: 'offer',
         readyTemplate: templateSource === 'upload' ? uploadedTemplate : null,
-        customBackground: templateSource === 'gallery' ? galleryBackgroundImage : null,
+        // Use template image if available, otherwise use user's uploaded background
+        customBackground: templateSource === 'gallery'
+          ? (templateHasImage ? (selectedTemplateData as any)?.image : galleryBackgroundImage)
+          : null,
         addTextOverlay
       });
       return;
@@ -261,14 +284,16 @@ export const Wizard: React.FC<WizardProps> = ({ onComplete, onClose, initialBran
                 </button>
               </div>
 
-              {/* Gallery - Style Templates */}
+              {/* Gallery - Templates */}
               {templateSource === 'gallery' && (
                 <>
                   <p className="text-center text-white/40 text-sm mb-6">
-                    These are text style presets. You'll add your own background image in the next step.
+                    {TEMPLATE_GALLERY.some((t: any) => t.image)
+                      ? 'Select a ready-to-use template or a style preset.'
+                      : 'These are text style presets. You\'ll add your own background image in the next step.'}
                   </p>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {TEMPLATE_GALLERY.map((tmpl) => (
+                    {TEMPLATE_GALLERY.map((tmpl: any) => (
                       <button
                         key={tmpl.id}
                         onClick={() => setSelectedGalleryTemplate(tmpl.id)}
@@ -278,13 +303,27 @@ export const Wizard: React.FC<WizardProps> = ({ onComplete, onClose, initialBran
                             : 'ring-1 ring-white/10 hover:ring-white/30'
                         }`}
                       >
-                        <div
-                          className="absolute inset-0"
-                          style={{ background: tmpl.preview }}
-                        />
+                        {/* Show image if available, otherwise gradient */}
+                        {tmpl.image ? (
+                          <img
+                            src={tmpl.image}
+                            alt={tmpl.name}
+                            className="absolute inset-0 w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div
+                            className="absolute inset-0"
+                            style={{ background: tmpl.preview }}
+                          />
+                        )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                         <div className="absolute bottom-0 left-0 right-0 p-4">
-                          <span className="text-[10px] uppercase tracking-wider text-white/50">{tmpl.category}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] uppercase tracking-wider text-white/50">{tmpl.category}</span>
+                            {tmpl.image && (
+                              <span className="text-[9px] px-1.5 py-0.5 bg-emerald-500/30 text-emerald-300 rounded">Ready</span>
+                            )}
+                          </div>
                           <h3 className="text-white font-bold">{tmpl.name}</h3>
                           <p className="text-white/40 text-xs mt-1">{tmpl.description}</p>
                         </div>
