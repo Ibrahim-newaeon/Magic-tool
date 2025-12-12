@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { ArrowRight, ArrowLeft, Wand2, CheckCircle2, Image, Type, Smartphone, X, Upload, Grid, Sparkles, ToggleLeft, ToggleRight } from 'lucide-react';
+import React, { useState, useRef, useMemo } from 'react';
+import { ArrowRight, ArrowLeft, Wand2, CheckCircle2, Image, Type, Smartphone, X, Upload, Grid, Sparkles, ToggleLeft, ToggleRight, ImagePlus } from 'lucide-react';
 import { Button } from './Button';
 import { ProductInfo, CreativeSize, BrandKit, GeneratedOfferCopy } from '../types/offerTemplate';
 import { OFFER_TEMPLATES } from '../templates/offerTemplates';
@@ -14,24 +14,35 @@ interface WizardProps {
     brandKit: BrandKit;
     activeTab: 'offer' | 'story';
     readyTemplate?: string | null;
+    customBackground?: string | null;
     addTextOverlay: boolean;
   }) => void;
   onClose: () => void;
   initialBrandKit: BrandKit;
 }
 
-// Sample template gallery (preview images)
+// Sample template gallery (preview images) - these are STYLE presets, not actual backgrounds
 const TEMPLATE_GALLERY = [
-  { id: 'modern-minimal', name: 'Modern Minimal', preview: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', category: 'Elegant' },
-  { id: 'bold-sale', name: 'Bold Sale', preview: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', category: 'Sale' },
-  { id: 'fashion-editorial', name: 'Fashion', preview: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', category: 'Fashion' },
-  { id: 'promo-square', name: 'Promo Square', preview: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', category: 'Promo' },
-  { id: 'story-offer', name: 'Story Offer', preview: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', category: 'Story' },
-  { id: 'custom-uploaded', name: 'Neon Glow', preview: 'linear-gradient(135deg, #a855f7 0%, #3b82f6 100%)', category: 'Modern' },
+  { id: 'modern-minimal', name: 'Modern Minimal', preview: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', category: 'Elegant', description: 'Clean centered text with elegant typography' },
+  { id: 'bold-sale', name: 'Bold Sale', preview: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', category: 'Sale', description: 'High impact with bold price badge' },
+  { id: 'fashion-editorial', name: 'Fashion', preview: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', category: 'Fashion', description: 'Minimal text for showcasing imagery' },
+  { id: 'promo-square', name: 'Promo Square', preview: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', category: 'Promo', description: 'Standard square ad layout' },
+  { id: 'story-offer', name: 'Story Offer', preview: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', category: 'Story', description: 'Vertical layout for stories' },
+  { id: 'custom-uploaded', name: 'Neon Glow', preview: 'linear-gradient(135deg, #a855f7 0%, #3b82f6 100%)', category: 'Modern', description: 'Modern neon-style text effects' },
 ];
 
-const STEPS = [
-  { id: 'template', title: 'Choose Template', icon: Image },
+// Steps for Gallery flow (needs background upload)
+const GALLERY_STEPS = [
+  { id: 'template', title: 'Choose Style', icon: Image },
+  { id: 'background', title: 'Add Background', icon: ImagePlus },
+  { id: 'text', title: 'Text Options', icon: Type },
+  { id: 'format', title: 'Select Format', icon: Smartphone },
+  { id: 'finish', title: 'Finish', icon: Sparkles },
+];
+
+// Steps for Upload flow (complete design)
+const UPLOAD_STEPS = [
+  { id: 'template', title: 'Upload Design', icon: Upload },
   { id: 'text', title: 'Text Options', icon: Type },
   { id: 'format', title: 'Select Format', icon: Smartphone },
   { id: 'finish', title: 'Finish', icon: Sparkles },
@@ -44,7 +55,14 @@ export const Wizard: React.FC<WizardProps> = ({ onComplete, onClose, initialBran
   const [templateSource, setTemplateSource] = useState<'gallery' | 'upload'>('gallery');
   const [selectedGalleryTemplate, setSelectedGalleryTemplate] = useState('modern-minimal');
   const [uploadedTemplate, setUploadedTemplate] = useState<string | null>(null);
+  const [galleryBackgroundImage, setGalleryBackgroundImage] = useState<string | null>(null);
   const uploadInputRef = useRef<HTMLInputElement>(null);
+  const backgroundInputRef = useRef<HTMLInputElement>(null);
+
+  // Dynamic steps based on template source
+  const STEPS = useMemo(() => {
+    return templateSource === 'gallery' ? GALLERY_STEPS : UPLOAD_STEPS;
+  }, [templateSource]);
 
   // Text Options
   const [addTextOverlay, setAddTextOverlay] = useState(true);
@@ -70,6 +88,19 @@ export const Wizard: React.FC<WizardProps> = ({ onComplete, onClose, initialBran
         if (ev.target?.result) {
           setUploadedTemplate(ev.target.result as string);
           setTemplateSource('upload');
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleBackgroundUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        if (ev.target?.result) {
+          setGalleryBackgroundImage(ev.target.result as string);
         }
       };
       reader.readAsDataURL(file);
@@ -122,6 +153,7 @@ export const Wizard: React.FC<WizardProps> = ({ onComplete, onClose, initialBran
         brandKit: initialBrandKit,
         activeTab: 'offer',
         readyTemplate: templateSource === 'upload' ? uploadedTemplate : null,
+        customBackground: templateSource === 'gallery' ? galleryBackgroundImage : null,
         addTextOverlay
       });
       return;
@@ -132,10 +164,16 @@ export const Wizard: React.FC<WizardProps> = ({ onComplete, onClose, initialBran
   const handleBack = () => setCurrentStep(prev => Math.max(0, prev - 1));
 
   const canProceed = () => {
-    if (currentStep === 0) {
+    const currentStepId = STEPS[currentStep]?.id;
+
+    if (currentStepId === 'template') {
       return templateSource === 'upload' ? !!uploadedTemplate : !!selectedGalleryTemplate;
     }
-    if (currentStep === 1) {
+    if (currentStepId === 'background') {
+      // Gallery templates require a background image
+      return !!galleryBackgroundImage;
+    }
+    if (currentStepId === 'text') {
       return !addTextOverlay || (headline.trim() !== '' || productName.trim() !== '');
     }
     return true;
@@ -185,73 +223,88 @@ export const Wizard: React.FC<WizardProps> = ({ onComplete, onClose, initialBran
       <div className="flex-1 flex items-center justify-center p-6 overflow-y-auto">
         <div className="w-full max-w-4xl">
 
-          {/* STEP 0: Template Selection */}
-          {currentStep === 0 && (
+          {/* STEP: Template Selection */}
+          {STEPS[currentStep]?.id === 'template' && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="text-center mb-8">
                 <h1 className="text-4xl font-bold text-white mb-2">Choose Your Template</h1>
-                <p className="text-white/50">Upload your own design or pick from our gallery</p>
+                <p className="text-white/50">Upload a complete design or pick a style from our gallery</p>
               </div>
 
               {/* Source Toggle */}
               <div className="flex justify-center gap-2 mb-8">
                 <button
-                  onClick={() => setTemplateSource('gallery')}
+                  onClick={() => {
+                    setTemplateSource('gallery');
+                    setCurrentStep(0); // Reset to beginning when switching
+                  }}
                   className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${
                     templateSource === 'gallery'
                       ? 'bg-white text-black'
                       : 'bg-white/10 text-white hover:bg-white/20'
                   }`}
                 >
-                  <Grid size={18} /> Gallery Templates
+                  <Grid size={18} /> Style Templates
                 </button>
                 <button
-                  onClick={() => setTemplateSource('upload')}
+                  onClick={() => {
+                    setTemplateSource('upload');
+                    setCurrentStep(0); // Reset to beginning when switching
+                  }}
                   className={`flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all ${
                     templateSource === 'upload'
                       ? 'bg-white text-black'
                       : 'bg-white/10 text-white hover:bg-white/20'
                   }`}
                 >
-                  <Upload size={18} /> Upload Your Own
+                  <Upload size={18} /> Upload Complete Design
                 </button>
               </div>
 
-              {/* Gallery */}
+              {/* Gallery - Style Templates */}
               {templateSource === 'gallery' && (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {TEMPLATE_GALLERY.map((tmpl) => (
-                    <button
-                      key={tmpl.id}
-                      onClick={() => setSelectedGalleryTemplate(tmpl.id)}
-                      className={`group relative aspect-[4/5] rounded-2xl overflow-hidden transition-all ${
-                        selectedGalleryTemplate === tmpl.id
-                          ? 'ring-4 ring-white scale-[1.02]'
-                          : 'ring-1 ring-white/10 hover:ring-white/30'
-                      }`}
-                    >
-                      <div
-                        className="absolute inset-0"
-                        style={{ background: tmpl.preview }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                      <div className="absolute bottom-0 left-0 right-0 p-4">
-                        <span className="text-[10px] uppercase tracking-wider text-white/50">{tmpl.category}</span>
-                        <h3 className="text-white font-bold">{tmpl.name}</h3>
-                      </div>
-                      {selectedGalleryTemplate === tmpl.id && (
-                        <div className="absolute top-3 right-3 w-6 h-6 bg-white rounded-full flex items-center justify-center">
-                          <CheckCircle2 size={16} className="text-black" />
+                <>
+                  <p className="text-center text-white/40 text-sm mb-6">
+                    These are text style presets. You'll add your own background image in the next step.
+                  </p>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {TEMPLATE_GALLERY.map((tmpl) => (
+                      <button
+                        key={tmpl.id}
+                        onClick={() => setSelectedGalleryTemplate(tmpl.id)}
+                        className={`group relative aspect-[4/5] rounded-2xl overflow-hidden transition-all ${
+                          selectedGalleryTemplate === tmpl.id
+                            ? 'ring-4 ring-white scale-[1.02]'
+                            : 'ring-1 ring-white/10 hover:ring-white/30'
+                        }`}
+                      >
+                        <div
+                          className="absolute inset-0"
+                          style={{ background: tmpl.preview }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                        <div className="absolute bottom-0 left-0 right-0 p-4">
+                          <span className="text-[10px] uppercase tracking-wider text-white/50">{tmpl.category}</span>
+                          <h3 className="text-white font-bold">{tmpl.name}</h3>
+                          <p className="text-white/40 text-xs mt-1">{tmpl.description}</p>
                         </div>
-                      )}
-                    </button>
-                  ))}
-                </div>
+                        {selectedGalleryTemplate === tmpl.id && (
+                          <div className="absolute top-3 right-3 w-6 h-6 bg-white rounded-full flex items-center justify-center">
+                            <CheckCircle2 size={16} className="text-black" />
+                          </div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </>
               )}
 
-              {/* Upload */}
+              {/* Upload - Complete Design */}
               {templateSource === 'upload' && (
                 <div className="flex flex-col items-center">
+                  <p className="text-center text-white/40 text-sm mb-6">
+                    Upload a ready-made design. It will be used as-is (no text overlays by default).
+                  </p>
                   <button
                     onClick={() => uploadInputRef.current?.click()}
                     className={`w-full max-w-md aspect-[4/5] rounded-2xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-4 ${
@@ -268,8 +321,8 @@ export const Wizard: React.FC<WizardProps> = ({ onComplete, onClose, initialBran
                           <Upload size={32} className="text-white/50" />
                         </div>
                         <div className="text-center">
-                          <p className="text-white font-medium">Click to upload your design</p>
-                          <p className="text-white/40 text-sm">PNG, JPG, WebP supported</p>
+                          <p className="text-white font-medium">Click to upload your complete design</p>
+                          <p className="text-white/40 text-sm">PNG, JPG, WebP (1080×1080 or 1080×1920 recommended)</p>
                         </div>
                       </>
                     )}
@@ -294,8 +347,68 @@ export const Wizard: React.FC<WizardProps> = ({ onComplete, onClose, initialBran
             </div>
           )}
 
-          {/* STEP 1: Text Options */}
-          {currentStep === 1 && (
+          {/* STEP: Background Image (Gallery templates only) */}
+          {STEPS[currentStep]?.id === 'background' && (
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="text-center mb-8">
+                <h1 className="text-4xl font-bold text-white mb-2">Add Your Background</h1>
+                <p className="text-white/50">
+                  Upload an image to use as the background for your "<span className="text-amber-400">{TEMPLATE_GALLERY.find(t => t.id === selectedGalleryTemplate)?.name}</span>" template
+                </p>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <button
+                  onClick={() => backgroundInputRef.current?.click()}
+                  className={`w-full max-w-lg aspect-video rounded-2xl border-2 border-dashed transition-all flex flex-col items-center justify-center gap-4 ${
+                    galleryBackgroundImage
+                      ? 'border-emerald-500 bg-emerald-500/10'
+                      : 'border-white/20 hover:border-white/40 bg-white/5'
+                  }`}
+                >
+                  {galleryBackgroundImage ? (
+                    <img src={galleryBackgroundImage} alt="Background" className="w-full h-full object-cover rounded-xl" />
+                  ) : (
+                    <>
+                      <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-500/20 to-rose-500/20 flex items-center justify-center">
+                        <ImagePlus size={40} className="text-white/50" />
+                      </div>
+                      <div className="text-center">
+                        <p className="text-white font-medium text-lg">Click to upload background image</p>
+                        <p className="text-white/40 text-sm mt-1">Product photo, promotional image, or any visual</p>
+                        <p className="text-white/30 text-xs mt-2">PNG, JPG, WebP (1080×1080 or 1080×1920 recommended)</p>
+                      </div>
+                    </>
+                  )}
+                </button>
+                <input
+                  type="file"
+                  ref={backgroundInputRef}
+                  className="hidden"
+                  accept="image/png,image/jpeg,image/webp"
+                  onChange={handleBackgroundUpload}
+                />
+                {galleryBackgroundImage && (
+                  <button
+                    onClick={() => setGalleryBackgroundImage(null)}
+                    className="mt-4 text-sm text-white/50 hover:text-white"
+                  >
+                    Remove and upload different
+                  </button>
+                )}
+
+                {/* Preview hint */}
+                <div className="mt-8 p-4 bg-white/5 rounded-xl border border-white/10 max-w-lg">
+                  <p className="text-white/60 text-sm text-center">
+                    <span className="text-amber-400">💡 Tip:</span> The "{TEMPLATE_GALLERY.find(t => t.id === selectedGalleryTemplate)?.name}" style will add text overlays on top of your background image.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* STEP: Text Options */}
+          {STEPS[currentStep]?.id === 'text' && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="text-center mb-8">
                 <h1 className="text-4xl font-bold text-white mb-2">Text & Content</h1>
@@ -407,8 +520,8 @@ export const Wizard: React.FC<WizardProps> = ({ onComplete, onClose, initialBran
             </div>
           )}
 
-          {/* STEP 2: Format */}
-          {currentStep === 2 && (
+          {/* STEP: Format */}
+          {STEPS[currentStep]?.id === 'format' && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="text-center mb-8">
                 <h1 className="text-4xl font-bold text-white mb-2">Select Format</h1>
@@ -443,8 +556,8 @@ export const Wizard: React.FC<WizardProps> = ({ onComplete, onClose, initialBran
             </div>
           )}
 
-          {/* STEP 3: Finish */}
-          {currentStep === 3 && (
+          {/* STEP: Finish */}
+          {STEPS[currentStep]?.id === 'finish' && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 text-center">
               <div className="mb-8">
                 <div className="w-20 h-20 rounded-full bg-gradient-to-br from-amber-500 to-rose-500 flex items-center justify-center mx-auto mb-6">
@@ -458,9 +571,17 @@ export const Wizard: React.FC<WizardProps> = ({ onComplete, onClose, initialBran
                 <div className="flex justify-between items-center py-2 border-b border-white/10">
                   <span className="text-white/50">Template</span>
                   <span className="text-white font-medium">
-                    {templateSource === 'upload' ? 'Custom Upload' : TEMPLATE_GALLERY.find(t => t.id === selectedGalleryTemplate)?.name}
+                    {templateSource === 'upload' ? 'Complete Design (Upload)' : `${TEMPLATE_GALLERY.find(t => t.id === selectedGalleryTemplate)?.name} Style`}
                   </span>
                 </div>
+                {templateSource === 'gallery' && (
+                  <div className="flex justify-between items-center py-2 border-b border-white/10">
+                    <span className="text-white/50">Background</span>
+                    <span className={`font-medium ${galleryBackgroundImage ? 'text-emerald-400' : 'text-rose-400'}`}>
+                      {galleryBackgroundImage ? 'Custom Image Added' : 'Missing!'}
+                    </span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center py-2 border-b border-white/10">
                   <span className="text-white/50">Text Overlay</span>
                   <span className={`font-medium ${addTextOverlay ? 'text-emerald-400' : 'text-white/50'}`}>

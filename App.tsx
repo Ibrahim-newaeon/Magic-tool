@@ -375,9 +375,13 @@ function App() {
                  }
                  handleBrandKitUpdate(data.brandKit);
                  setActiveTab(data.activeTab);
-                 // Handle ready template from wizard
+                 // Handle ready template from wizard (complete design, no overlays)
                  if (data.readyTemplate) {
                    setGeneratedImage(data.readyTemplate);
+                 }
+                 // Handle custom background from wizard (gallery template + user background)
+                 if (data.customBackground) {
+                   setSourceImage({ url: data.customBackground, mimeType: 'image/png' });
                  }
                  setShowWizard(false);
              }}
