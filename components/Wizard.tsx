@@ -24,9 +24,9 @@ interface WizardProps {
 // Template gallery - templates with 'image' property are ready-to-use with backgrounds
 // Templates without 'image' are style presets that need user to upload background
 const TEMPLATE_GALLERY = [
-  // Ready-to-use templates (Canva exports) - add your templates here!
-  // { id: 'canva-sale-1', name: 'EOY Sale', image: '/templates/eoy-sale.png', category: 'Sale', description: 'End of year sale template' },
-  // { id: 'canva-promo-1', name: 'Flash Promo', image: '/templates/flash-promo.png', category: 'Promo', description: 'Flash promotion template' },
+  // Ready-to-use templates (with backgrounds)
+  { id: 'sale-1', name: 'Hanging Sale', image: '/templates/sale-1.png', category: 'Sale', description: 'Red background with hanging SALE letters' },
+  { id: 'sale-2', name: 'Watercolor Discount', image: '/templates/sale-2.png', category: 'Sale', description: 'White background with watercolor accents' },
 
   // Style presets (gradient placeholders - user uploads their own background)
   { id: 'modern-minimal', name: 'Modern Minimal', preview: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', category: 'Elegant', description: 'Clean centered text with elegant typography' },
